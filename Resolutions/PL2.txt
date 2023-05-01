@@ -1,0 +1,5 @@
+q11 3.0
+q12 2.0
+q21 2.0
+q22 3.0
+Resultant en un profit de 50.0 Dt
