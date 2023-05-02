@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import gurobipy as gb
-
+import pandas as pd
 
 class PL7_Ui(object):
     def setupUi(self, MainWindow):
@@ -283,10 +283,13 @@ class PL7_Ui(object):
         PL7.optimize()
         with open("Resolutions/PL7.txt", "w") as f:
             sys.stdout = f
+            sheet = {}
             vars = PL7.getVars()
             for var in vars:
                 print(var.varName, var.x)
-
+                sheet.update({var.varName : [var.x]})
+            df = pd.DataFrame(sheet)
+            df.to_excel("Resolution_excel/pl7.xlsx")
 
 
 if __name__ == "__main__":

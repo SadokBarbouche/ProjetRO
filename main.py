@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import pl1
 import pl2
 import pl3
+import pl4
 import pl5
 import pl6
 import pl7
@@ -37,11 +38,11 @@ class Ui_MainWindow(object):
         self.ui.setupUi(self.window)
         self.window.show()
 
-    # def openExercice6(self):
-    #     self.window = QtWidgets.QMainWindow()
-    #     self.ui = pl6.PL6_Ui()
-    #     self.ui.setupUi(self.window)
-    #     self.window.show()
+    def openExercice4(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = pl4.Ui_MainWindow()
+        self.ui.setupUi(self.window)
+        self.window.show()
 
 
     def openExercice5(self):
@@ -86,7 +87,7 @@ class Ui_MainWindow(object):
         self.pushButton_3.setGeometry(QtCore.QRect(290, 430, 93, 28))
         self.pushButton_3.setObjectName("pushButton_3")
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        # self.pushButton_4.clicked.connect(self.openExercice7)
+        self.pushButton_4.clicked.connect(self.openExercice4)
         self.pushButton_4.setGeometry(QtCore.QRect(410, 430, 93, 28))
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)

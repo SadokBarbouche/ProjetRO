@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import gurobipy as gp
+import pandas as pd
 
 
 # CULT STRUCTURE
@@ -331,9 +332,15 @@ class PL1_Ui(object):
             # print(model.status == gp.GRB.OPTIMAL)
             print(f'Valeur objective du model : {model.ObjVal}')
             i = 0
+            sheet = {}
             for val in vals:
                 print(f'x{i} : {val.X}')
                 i += 1
+                sheet.update({"X" + str(i): [val.X]})
+            df = pd.DataFrame(sheet)
+            df.to_excel("Resolution_excel/pl1.xlsx", index=False)
+
+
 if __name__ == "__main__":
     import sys
 

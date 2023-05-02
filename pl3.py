@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import numpy as np
 import gurobipy as gp
+import pandas as pd
 from gurobipy import Model, GRB, quicksum
 
 """
@@ -151,10 +152,14 @@ class PL3_Ui(object):
             result.append(aux[(i + 2) % 7])
         with open("Resolutions/PL3.txt", "w") as f:
             sys.stdout = f
+            sheet = {}
             print("plannification des congés ")
-
             for i in range(7):
                 print(jour[i] + "  :" + str(result[i]))
+                sheet.update({jour[i]: [result[i]]})
+            df = pd.DataFrame(sheet)
+            df.to_excel("Resolution_excel/pl3.xlsx", index=False)
+
             # ===================RESOLUTION
             print("le nombre totale optimale des employés est ", int(PL3.objVal))
 

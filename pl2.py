@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import gurobipy as gb
+import pandas as pd
 
 
 class PL2_Ui(object):
@@ -75,7 +76,8 @@ class PL2_Ui(object):
         self.label_9.setText(_translate("MainWindow", "gain Chauffage"))
 
     def PL2(self):
-        Qtype1, Qtype2, gG, gC = float(self.qtype1.text()),float(self.qtype2.text()),float(self.gain_gaz.text()),float(self.gain_chauffage.text())
+        Qtype1, Qtype2, gG, gC = float(self.qtype1.text()), float(self.qtype2.text()), float(
+            self.gain_gaz.text()), float(self.gain_chauffage.text())
         PL2 = gb.Model("PL2")
         # ============================================VARIABLES
         repartition = []
@@ -93,17 +95,21 @@ class PL2_Ui(object):
         PL2.setObjective(Income, gb.GRB.MAXIMIZE)
         PL2.optimize()
         vars = PL2.getVars()
+        sheet = {}
         with open("Resolutions/PL2.txt", "w") as f:
             sys.stdout = f
             # print(model.status == gp.GRB.OPTIMAL)
             for var in vars:
                 print(var.varName, var.x)
+                sheet.update({var.varName: [var.x]})
+            df = pd.DataFrame(sheet)
+            df.to_excel("Resolution_excel/pl2.xlsx", index=False)
             print(f'Resultant en un profit de {PL2.ObjVal} Dt')
-
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = PL2_Ui()

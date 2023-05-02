@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pandas as pd
 # Form implementation generated from reading ui file 'exercice6.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import gurobipy as gp
+import pandas as pd
 
 
 class PL6_Ui(object):
@@ -315,15 +316,30 @@ class PL6_Ui(object):
         self.label_20.setText(_translate("MainWindow", "D2"))
         self.label_21.setText(_translate("MainWindow", "E"))
         self.label_22.setText(_translate("MainWindow", "F"))
+
     def PLM6(self):
         C = [
-            [float(self.lineEdit.text()), float(self.lineEdit_2.text()), float(self.lineEdit_3.text()), float(self.lineEdit_4.text()), float(self.lineEdit_5.text()), float(self.lineEdit_6.text()),float(self.lineEdit_7.text())],
-            [float(self.lineEdit_10.text()), float(self.lineEdit_12.text()), float(self.lineEdit_9.text()), float(self.lineEdit_16.text()), float(self.lineEdit_13.text()), float(self.lineEdit_14.text()),float(self.lineEdit_11.text())],
-            [float(self.lineEdit_18.text()), float(self.lineEdit_20.text()), float(self.lineEdit_17.text()),float(self.lineEdit_24.text()), float(self.lineEdit_21.text()), float(self.lineEdit_22.text()),float(self.lineEdit_19.text())],
-            [float(self.lineEdit_26.text()), float(self.lineEdit_28.text()), float(self.lineEdit_25.text()),float(self.lineEdit_32.text()), float(self.lineEdit_29.text()), float(self.lineEdit_30.text()),float(self.lineEdit_27.text())],
-            [float(self.lineEdit_34.text()), float(self.lineEdit_36.text()), float(self.lineEdit_33.text()),float(self.lineEdit_40.text()), float(self.lineEdit_37.text()), float(self.lineEdit_38.text()),float(self.lineEdit_35.text())],
-            [float(self.lineEdit_42.text()), float(self.lineEdit_44.text()), float(self.lineEdit_41.text()),float(self.lineEdit_48.text()), float(self.lineEdit_45.text()), float(self.lineEdit_46.text()),float(self.lineEdit_43.text())],
-            [float(self.lineEdit_50.text()), float(self.lineEdit_52.text()), float(self.lineEdit_49.text()),float(self.lineEdit_56.text()), float(self.lineEdit_53.text()), float(self.lineEdit_54.text()),float(self.lineEdit_51.text())],
+            [float(self.lineEdit.text()), float(self.lineEdit_2.text()), float(self.lineEdit_3.text()),
+             float(self.lineEdit_4.text()), float(self.lineEdit_5.text()), float(self.lineEdit_6.text()),
+             float(self.lineEdit_7.text())],
+            [float(self.lineEdit_10.text()), float(self.lineEdit_12.text()), float(self.lineEdit_9.text()),
+             float(self.lineEdit_16.text()), float(self.lineEdit_13.text()), float(self.lineEdit_14.text()),
+             float(self.lineEdit_11.text())],
+            [float(self.lineEdit_18.text()), float(self.lineEdit_20.text()), float(self.lineEdit_17.text()),
+             float(self.lineEdit_24.text()), float(self.lineEdit_21.text()), float(self.lineEdit_22.text()),
+             float(self.lineEdit_19.text())],
+            [float(self.lineEdit_26.text()), float(self.lineEdit_28.text()), float(self.lineEdit_25.text()),
+             float(self.lineEdit_32.text()), float(self.lineEdit_29.text()), float(self.lineEdit_30.text()),
+             float(self.lineEdit_27.text())],
+            [float(self.lineEdit_34.text()), float(self.lineEdit_36.text()), float(self.lineEdit_33.text()),
+             float(self.lineEdit_40.text()), float(self.lineEdit_37.text()), float(self.lineEdit_38.text()),
+             float(self.lineEdit_35.text())],
+            [float(self.lineEdit_42.text()), float(self.lineEdit_44.text()), float(self.lineEdit_41.text()),
+             float(self.lineEdit_48.text()), float(self.lineEdit_45.text()), float(self.lineEdit_46.text()),
+             float(self.lineEdit_43.text())],
+            [float(self.lineEdit_50.text()), float(self.lineEdit_52.text()), float(self.lineEdit_49.text()),
+             float(self.lineEdit_56.text()), float(self.lineEdit_53.text()), float(self.lineEdit_54.text()),
+             float(self.lineEdit_51.text())],
         ]
 
         X = [
@@ -369,14 +385,19 @@ class PL6_Ui(object):
         PLM6.addConstr(sum(X[4][j] for j in range(7)) <= sum(X[i][4] for i in range(7)))
         vars = PLM6.getVars()
         PLM6.optimize()
+        sheet = {}
         with open("Resolutions/PL6.txt", "w") as f:
             sys.stdout = f
             for var in vars:
                 print(var.varName, var.x)
+                sheet.update({var.varName: [var.x]})
+            df = pd.DataFrame(sheet)
+            df.to_excel("Resolution_excel/pl6.xlsx", index=False)
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = PL6_Ui()

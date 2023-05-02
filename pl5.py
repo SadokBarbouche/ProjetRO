@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pandas as pd
 # Form implementation generated from reading ui file 'exercice5.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import gurobipy as gb
-
+import pandas as pd
 
 class PL5_Ui(object):
     def setupUi(self, MainWindow):
@@ -104,16 +104,16 @@ class PL5_Ui(object):
 
         PL5.optimize()
         vars = PL5.getVars()
-
+        sheet = {}
         with open("Resolutions/PL5.txt", "w") as f:
             sys.stdout = f
             # print(model.status == gp.GRB.OPTIMAL)
             for var in vars:
                 print(var.varName, var.x)
+                sheet.update({var.varName: [var.x]})
             print(f'Avec un cout minimale de {int(PL5.ObjVal)}')
-
-
-
+            df = pd.DataFrame(sheet)
+            df.to_excel("Resolution_excel/pl5.xlsx", index=False)
 
 
 if __name__ == "__main__":

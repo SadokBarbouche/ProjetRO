@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import gurobipy as gp
 from gurobipy import GRB
 import numpy as np
+import pandas as pd
 
 class PL9_Ui(object):
     def setupUi(self, MainWindow):
@@ -202,18 +203,30 @@ class PL9_Ui(object):
         self.label_6.setText(_translate("MainWindow", "Couts transport clients"))
         self.label_7.setText(_translate("MainWindow", "demandes clients "))
         self.resoudre1.setText(_translate("MainWindow", "Résoudre"))
+
     def pl9(self):
         usines = range(5)
         depots = range(3)
         clients = range(4)
 
-        capacites_production = [int(self.lineEdit.text()), int(self.lineEdit_2.text()), int(self.lineEdit_3.text()), int(self.lineEdit_4.text()), int(self.lineEdit_5.text())]
-        couts_fixes_usines = [int(self.lineEdit_10.text()), int(self.lineEdit_8.text()), int(self.lineEdit_6.text()), int(self.lineEdit_9.text()), int(self.lineEdit_7.text())]
+        capacites_production = [int(self.lineEdit.text()), int(self.lineEdit_2.text()), int(self.lineEdit_3.text()),
+                                int(self.lineEdit_4.text()), int(self.lineEdit_5.text())]
+        couts_fixes_usines = [int(self.lineEdit_10.text()), int(self.lineEdit_8.text()), int(self.lineEdit_6.text()),
+                              int(self.lineEdit_9.text()), int(self.lineEdit_7.text())]
         couts_fixes_depots = [int(self.lineEdit_12.text()), int(self.lineEdit_14.text()), int(self.lineEdit_11.text())]
-        couts_production_transport = [[int(self.lineEdit_20.text()), int(self.lineEdit_16.text()), int(self.lineEdit_15.text())], [int(self.lineEdit_13.text()), int(self.lineEdit_19.text()), int(self.lineEdit_22.text())], [int(self.lineEdit_18.text()), int(self.lineEdit_21.text()), int(self.lineEdit_17.text())], [int(self.lineEdit_26.text()), int(self.lineEdit_28.text()), int(self.lineEdit_25.text())],
-                                      [int(self.lineEdit_34.text()), int(self.lineEdit_36.text()), int(self.lineEdit_33.text())]]
-        couts_transport_clients = [[int(self.lineEdit_27.text()), int(self.lineEdit_29.text()), int(self.lineEdit_30.text()), int(self.lineEdit_32.text())], [int(self.lineEdit_38.text()), int(self.lineEdit_37.text()), int(self.lineEdit_35.text()), int(self.lineEdit_40.text())], [80, 30, 50, 60]]
-        demandes_clients = [int(self.lineEdit_31.text()), int(self.lineEdit_24.text()), int(self.lineEdit_23.text()), int(self.lineEdit_39.text())]
+        couts_production_transport = [
+            [int(self.lineEdit_20.text()), int(self.lineEdit_16.text()), int(self.lineEdit_15.text())],
+            [int(self.lineEdit_13.text()), int(self.lineEdit_19.text()), int(self.lineEdit_22.text())],
+            [int(self.lineEdit_18.text()), int(self.lineEdit_21.text()), int(self.lineEdit_17.text())],
+            [int(self.lineEdit_26.text()), int(self.lineEdit_28.text()), int(self.lineEdit_25.text())],
+            [int(self.lineEdit_34.text()), int(self.lineEdit_36.text()), int(self.lineEdit_33.text())]]
+        couts_transport_clients = [
+            [int(self.lineEdit_27.text()), int(self.lineEdit_29.text()), int(self.lineEdit_30.text()),
+             int(self.lineEdit_32.text())],
+            [int(self.lineEdit_38.text()), int(self.lineEdit_37.text()), int(self.lineEdit_35.text()),
+             int(self.lineEdit_40.text())], [80, 30, 50, 60]]
+        demandes_clients = [int(self.lineEdit_31.text()), int(self.lineEdit_24.text()), int(self.lineEdit_23.text()),
+                            int(self.lineEdit_39.text())]
 
         # Création du modèle
         m = gp.Model()
@@ -260,6 +273,7 @@ class PL9_Ui(object):
         m.optimize()
         with open("Resolutions/PL9.txt", "w") as f:
             sys.stdout = f
+            sheet = {}
             # Affichage de la solution
             if m.status == gp.GRB.OPTIMAL:
                 print('Solution optimale :')
@@ -268,17 +282,23 @@ class PL9_Ui(object):
                 for i in range(5):
                     for j in range(3):
                         print(f'X[{i + 1},{j + 1}] = {x[i, j].x:.2f} tonnes')
-
+                        sheet.update({
+                            "x"+str(i+1)+str(j+1): [x[i, j].x]
+                        })
                 for j in range(3):
                     for k in range(4):
-                        print(f'Y[{j + 1},{k + 1}] = {y[j, k].x:.2f} tonnes')
-
+                        print(f'Y[{j + 1},{k + 1}] = {y[j][k].x:.2f} tonnes')
+                        sheet.update({
+                            "y" + str(j+1) + str(k+1): [y[i][j].x]
+                        })
             else:
                 print('Aucune solution trouvée')
-
+            df = pd.DataFrame(sheet)
+            df.to_excel("Resolution_excel/pl9.xlsx" , index=False)
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = PL9_Ui()
